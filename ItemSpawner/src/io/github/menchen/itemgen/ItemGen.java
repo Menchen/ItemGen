@@ -25,7 +25,7 @@ public class ItemGen extends JavaPlugin
     public void onEnable() {
 
 		getLogger().info("ItemGen setuping.............. ");
-        if (setupActionbar()) {
+        if (setupNMS()) {
         	getLogger().info("Server version:"+version);
             getLogger().info("The plugin setup process is complete!");
 
@@ -175,7 +175,7 @@ public class ItemGen extends JavaPlugin
 			return false;
 		}
 	}
-	private boolean setupActionbar() {
+	private boolean setupNMS() {
 
         
 
