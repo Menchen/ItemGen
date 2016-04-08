@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -63,14 +64,18 @@ public class ItemGen extends JavaPlugin
 			int delay = -1;
 			int ranger = 2;
 			int sranger = 1;
+			Player player = (Player)sender;
 			if(args.length == 1){
 				if (args[0].equals("help")){
 			
 				sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_GREEN).append("============================================").toString());
-				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("Usage: /ig ||just /ig to set a spawner (just set type and his nbt)").toString());
-				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("Usage: /ig <delay> <ranger> <spawnranger>").toString());
+				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("Usage: /ig |just /ig to set a spawner (just set type and his nbt)").toString());
+				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("Usage: /ig <delay> <ranger> <spawnranger>|Set delay ranger and spawneranger to spawner").toString());
+				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("Usage: /ig give|Give you a mob spawner").toString());
+				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("Usage: /ig help|Display this message").toString());
+				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("Usage: /ig info|Display info message").toString());
 				sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_BLUE).append("**********************************************").toString());
-				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("delay in s").toString());
+				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("delay in s||item will spawn after this time").toString());
 				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("ranger in block || rangers need to spawn").toString());
 				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("spawnranger in block || will spawn into ranger").toString());
 				sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_GREEN).append("============================================").toString());
@@ -83,6 +88,9 @@ public class ItemGen extends JavaPlugin
 				sender.sendMessage((new StringBuilder()).append(ChatColor.UNDERLINE).append(ChatColor.AQUA).append("Thank for using this plugin :D").toString());
 				sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("============================================").toString());
 				return true;
+			}if (args[0].equals("give")){
+				ItemStack item = new ItemStack(Material.MOB_SPAWNER);
+				player.getInventory().addItem(item);
 			}
 		}
 			
@@ -118,7 +126,6 @@ public class ItemGen extends JavaPlugin
 				return true;
 			}
 			
-			Player player = (Player)sender;
 			if (player.getItemInHand().getType() == Material.AIR)
 			{
 				
@@ -145,7 +152,7 @@ public class ItemGen extends JavaPlugin
 				return true;
 			}
 			if (check[1] == "false"){
-				if(check[0]==null){
+				if(check[0] == null){
 					check[0] = "NO CHANGE";
 				}else{
 				sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_GREEN).append("============================================").toString());
@@ -161,7 +168,7 @@ public class ItemGen extends JavaPlugin
 				}
 			}else
 			{
-				sender.sendMessage((new StringBuilder()).append(ChatColor.RED).append("Something went wrong!!!").toString());
+				sender.sendMessage((new StringBuilder()).append(ChatColor.RED).append("Something went wrong!,check the log to debug.").toString());
 			}
 			return true;
 		}else{
