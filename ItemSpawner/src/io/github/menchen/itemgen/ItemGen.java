@@ -33,7 +33,7 @@ public class ItemGen extends JavaPlugin
             getLogger().severe((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("Server version:"+version).toString());
             getLogger().severe((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("Plugin version:"+getDescription().getVersion()).toString());
             getLogger().severe((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("Author:"+getDescription().getAuthors()).toString());
-            getLogger().severe((new StringBuilder()).append(ChatColor.UNDERLINE).append(ChatColor.AQUA).append("Aks Dev if your sure all is right :D").toString());
+            getLogger().severe((new StringBuilder()).append(ChatColor.UNDERLINE).append(ChatColor.AQUA).append("Aks Dev if you are sure all is right :D").toString());
             getLogger().severe((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("============================================").toString());
             getLogger().severe("Try update plugin or your server to least version!!!");
             Bukkit.getPluginManager().disablePlugin(this);
@@ -66,7 +66,7 @@ public class ItemGen extends JavaPlugin
 			int sranger = 1;
 			Player player = (Player)sender;
 			if(args.length == 1){
-				if (args[0].equals("help")){
+				if (args[0].equalsIgnoreCase("help")){
 			
 				sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_GREEN).append("============================================").toString());
 				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("Usage: /ig |just /ig to set a spawner (just set type and his nbt)").toString());
@@ -80,7 +80,7 @@ public class ItemGen extends JavaPlugin
 				sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE).append("spawnranger in block || will spawn into ranger").toString());
 				sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_GREEN).append("============================================").toString());
 				return true;
-			}else if (args[0].equals("info")){
+			}else if (args[0].equalsIgnoreCase("info")){
 				sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("============================================").toString());
 				sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("Server version:"+version).toString());
 				sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("Plugin version:"+getDescription().getVersion()).toString());
@@ -88,7 +88,7 @@ public class ItemGen extends JavaPlugin
 				sender.sendMessage((new StringBuilder()).append(ChatColor.UNDERLINE).append(ChatColor.AQUA).append("Thank for using this plugin :D").toString());
 				sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE).append("============================================").toString());
 				return true;
-			}if (args[0].equals("give")){
+			}if (args[0].equalsIgnoreCase("give")){
 				ItemStack item = new ItemStack(Material.MOB_SPAWNER);
 				player.getInventory().addItem(item);
 			}
