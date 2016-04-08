@@ -16,11 +16,6 @@ public class ItemGen extends JavaPlugin
 	public String version;
 	public String[] check = new String[2];
 	
-	
-	
-	public ItemGen()
-	{
-	}
 	@Override
     public void onEnable() {
 
