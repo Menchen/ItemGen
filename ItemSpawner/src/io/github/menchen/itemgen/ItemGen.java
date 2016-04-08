@@ -18,7 +18,6 @@ public class ItemGen extends JavaPlugin
 	
 	@Override
     public void onEnable() {
-
 		getLogger().info("ItemGen setuping.............. ");
         if (setupNMS()) {
         	getLogger().info("Server version:"+version);
