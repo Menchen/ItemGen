@@ -25,7 +25,6 @@ public class ItemGen extends JavaPlugin
             getLogger().info("The plugin setup process is complete!");
 
         } else {
-
             getLogger().severe("Failed to setup ItemGen!");
             getLogger().severe("Your server version is not compatible with this plugin!");
             getLogger().severe("Server version:"+version);
