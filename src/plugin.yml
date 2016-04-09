@@ -1,0 +1,15 @@
+name: ItemGen
+main: io.github.menchen.itemgen.ItemGen
+description: Let you generate item with mob spawner!!!
+version: 1.4.3
+author: MCLand
+commands:
+ itemgen:
+  aliases: [ig]
+  description: Let you generate item with spawner.
+  usage: Type [/ig help] to see help.
+  permission: itemgen.use
+permissions:
+ itemgen.use:
+  default: op
+  description: Allows you to use ItemGen.

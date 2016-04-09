@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src" />
+	<classpathentry kind="con"
+		path="org.eclipse.jdt.launching.JRE_CONTAINER" />
+	<classpathentry kind="lib"
+		path="D:/eclipse/Bukkit-API/paperspigot-api-1.8.7-R0.1-SNAPSHOT.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://hub.spigotmc.org/javadocs/spigot" />
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib"
+		path="D:/eclipse/Bukkit-API/PaperSpigot-1.8.8-R0.1-SNAPSHOT-latest.jar" />
+	<classpathentry kind="lib"
+		path="D:/eclipse/Bukkit-API/spigot-1.7.9-R0.3-SNAPSHOTBuild1502.jar" />
+	<classpathentry kind="lib"
+		path="D:/eclipse/Bukkit-API/spigot-1.7.10-R0.1-SNAPSHOTBuild1544.jar" />
+	<classpathentry kind="lib"
+		path="D:/eclipse/Bukkit-API/spigot-1.9.jar" />
+	<classpathentry kind="output" path="bin" />
+</classpath>
