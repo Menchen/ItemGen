@@ -109,7 +109,10 @@ public class ItemGen extends JavaPlugin {
 				}
 				if (args[0].equalsIgnoreCase("give")) {
 					ItemStack item = new ItemStack(Material.MOB_SPAWNER);
+					sender.sendMessage((new StringBuilder()).append(ChatColor.UNDERLINE).append(ChatColor.AQUA)
+							.append("Given to"+sender.getName()+"a Mob Spawner.").toString());
 					player.getInventory().addItem(item);
+					return true;
 				}
 			}
 
