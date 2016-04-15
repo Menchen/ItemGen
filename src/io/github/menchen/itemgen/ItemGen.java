@@ -145,12 +145,16 @@ public class ItemGen extends JavaPlugin {
 				}
 			}
 
-			if (player.getItemInHand().getType() == Material.AIR) {
+			
+				
+			
+			if (player.getItemInHand().getType() == Material.AIR||delay == -1) {
 
 				sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
 						.append("You need to be holding an item to use this command!").toString());
 				return true;
 			}
+			
 			Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(),
 					player.getLocation().getBlockY() - 1, player.getLocation().getBlockZ());
 			if (block == null || block.getType() != Material.MOB_SPAWNER) {
@@ -169,6 +173,9 @@ public class ItemGen extends JavaPlugin {
 			} else if (version.equals("v1_7_R4")) {
 				NMS17_R4 Setspawner17R4 = new NMS17_R4();
 				check = Setspawner17R4.setspawner(block, player, delay, ranger, sranger);
+			} else if (version.equals("v1_9_R1")){
+				NMS19_R1 Setspawner19R1 = new NMS19_R1();
+				check = Setspawner19R1.setspawner(block, player, delay, ranger, sranger);
 			} else {
 				sender.sendMessage(
 						(new StringBuilder()).append(ChatColor.RED).append("Not support version!!!").toString());
@@ -219,6 +226,8 @@ public class ItemGen extends JavaPlugin {
 		getLogger().info("Your server is running version " + version);
 		// server version that have NMS(Support)
 		if (version.equals("v1_8_R3")) {
+			return true;
+		}else if(version.equals("v1_9_R1")){
 			return true;
 		} else if (version.equals("v1_7_R3")) {
 			return true;
