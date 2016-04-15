@@ -1,7 +1,7 @@
 name: ItemGen
 main: io.github.menchen.itemgen.ItemGen
 description: Let you generate item with mob spawner!!!
-version: 1.4.3
+version: 1.5.4
 author: MCLand
 commands:
  itemgen:

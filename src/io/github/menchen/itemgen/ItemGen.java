@@ -146,13 +146,14 @@ public class ItemGen extends JavaPlugin {
 			}
 
 			
-				
-			
-			if (player.getItemInHand().getType() == Material.AIR||delay == -1) {
-
-				sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
-						.append("You need to be holding an item to use this command!").toString());
-				return true;
+			//Check player hand.
+			if (delay != -1){
+				if (player.getItemInHand().getType() == Material.AIR) {
+					
+					sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
+							.append("You need to be holding an item to use this command!").toString());
+					return true;
+				}
 			}
 			
 			Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(),
@@ -224,7 +225,7 @@ public class ItemGen extends JavaPlugin {
 		}
 
 		getLogger().info("Your server is running version " + version);
-		// server version that have NMS(Support),1.9 not tested...
+		// server version that have NMS(Support)
 		if (version.equals("v1_8_R3")) {
 			return true;
 		}else if(version.equals("v1_9_R1")){
