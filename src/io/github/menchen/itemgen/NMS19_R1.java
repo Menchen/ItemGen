@@ -21,6 +21,7 @@ public class NMS19_R1 {
 		if (tileEntity instanceof TileEntityMobSpawner) {
 			TileEntityMobSpawner mobSpawner = (TileEntityMobSpawner) tileEntity;
 			NBTTagCompound spawnerTag = new NBTTagCompound();
+			//Not test..
 			mobSpawner.save(spawnerTag);
 			if (delay == -1) {
 				spawnerTag.remove("SpawnPotentials");

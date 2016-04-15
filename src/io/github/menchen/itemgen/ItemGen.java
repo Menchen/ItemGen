@@ -224,7 +224,7 @@ public class ItemGen extends JavaPlugin {
 		}
 
 		getLogger().info("Your server is running version " + version);
-		// server version that have NMS(Support)
+		// server version that have NMS(Support),1.9 not tested...
 		if (version.equals("v1_8_R3")) {
 			return true;
 		}else if(version.equals("v1_9_R1")){
