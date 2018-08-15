@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="MinecraftServerApi">
+    <CLASSES>
+      <root url="file://$USER_HOME$/MinecraftServerApi" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$USER_HOME$/MinecraftServerApi" />
+    </SOURCES>
+    <excluded>
+      <root url="jar://$USER_HOME$/MinecraftServerApi/spigot-api-latest-shaded.jar!/" />
+    </excluded>
+    <jarDirectory url="file://$USER_HOME$/MinecraftServerApi" recursive="false" />
+    <jarDirectory url="file://$USER_HOME$/MinecraftServerApi" recursive="false" type="SOURCES" />
+  </library>
+</component>

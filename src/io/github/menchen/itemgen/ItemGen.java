@@ -14,10 +14,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ItemGen extends JavaPlugin {
 	public String version;
 	public String[] check = new String[2];
+    private Material SpawnerMat;
+    private NMSRefle Refle;
 
 	@Override
 	public void onEnable() {
 		getLogger().info("ItemGen setuping.............. ");
+        SpawnerMat = Material.values()[52];
 		if (setupNMS()) {
 			getLogger().info("Server version:" + version);
 			getLogger().info("The plugin setup process is complete!");
@@ -58,12 +61,12 @@ public class ItemGen extends JavaPlugin {
 			}
 			if (args.length > 3) {
 				sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
-						.append("Usage: /ig <delay> <ranger> <spawnranger>").toString());
+                        .append("Usage: /ig <Delay> <Player Range> <Spawn Range>").toString());
 				return true;
 			}
 			int delay = -1;
-			int ranger = 2;
-			int sranger = 1;
+            int range = 1;
+            int spawnRange = 1;
 			Player player = (Player) sender;
 			if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("help")) {
@@ -71,24 +74,24 @@ public class ItemGen extends JavaPlugin {
 					sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_GREEN)
 							.append("============================================").toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE)
-							.append("Usage: /ig |just /ig to set a spawner (just set type and his nbt)").toString());
+                            .append("Usage: /ig          Use /ig to set spawner item data ").toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE)
-							.append("Usage: /ig <delay> <ranger> <spawnranger>|Set delay ranger and spawneranger to spawner")
+                            .append("Usage: /ig <Delay> <Player Range> <Spawn Range>          Change spawner's delay, Player Range, and Spawner Range")
 							.toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE)
-							.append("Usage: /ig give|Give you a mob spawner").toString());
+                            .append("Usage: /ig give          Give you a mob spawner").toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE)
-							.append("Usage: /ig help|Display this message").toString());
+                            .append("Usage: /ig help          Display this message").toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE)
-							.append("Usage: /ig info|Display info message").toString());
-					sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_BLUE)
+                            .append("Usage: /ig info          Display info message about this plugin").toString());
+                    sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE)
 							.append("**********************************************").toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE)
-							.append("delay in s||item will spawn after this time").toString());
+                            .append("Delay (seconds),this is the time needed for each item spawn.").toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE)
-							.append("ranger in block || rangers need to spawn").toString());
+                            .append("Player Range (blocks), the radios that player need be for spawner to start spawning").toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE)
-							.append("spawnranger in block || will spawn into ranger").toString());
+                            .append("Spawn Range (blocks), the radios that items will spawn in").toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_GREEN)
 							.append("============================================").toString());
 					return true;
@@ -108,7 +111,7 @@ public class ItemGen extends JavaPlugin {
 					return true;
 				}
 				if (args[0].equalsIgnoreCase("give")) {
-					ItemStack item = new ItemStack(Material.MOB_SPAWNER);
+                    ItemStack item = new ItemStack(SpawnerMat);
 					sender.sendMessage((new StringBuilder()).append(ChatColor.GREEN)
 							.append("Given to " + sender.getName() + " a Mob Spawner.").toString());
 					player.getInventory().addItem(item);
@@ -122,25 +125,25 @@ public class ItemGen extends JavaPlugin {
 				} catch (Exception e) {
 
 					sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
-							.append("Wrong Delay, Usage: /ig <delay> <ranger> <spawnranger>").toString());
+                            .append("Wrong Delay, must be int (seconds)").toString());
 					return true;
 				}
 			}
 			if (args.length >= 2) {
 				try {
-					ranger = Integer.parseInt(args[1]);
+                    range = Integer.parseInt(args[1]);
 				} catch (Exception e) {
 					sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
-							.append("Wrong Ranger, Usage: /ig <delay> <ranger> <spawnranger>").toString());
+                            .append("Wrong Ranger, must be int (blocks)").toString());
 					return true;
 				}
 			}
 			if (args.length == 3) {
 				try {
-					sranger = Integer.parseInt(args[2]);
+                    spawnRange = Integer.parseInt(args[2]);
 				} catch (Exception e) {
 					sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
-							.append("Wrong SpawnRanger, Usage: /ig <delay> <ranger> <spawnranger>").toString());
+                            .append("Wrong SpawnRanger, must be int (blocks)").toString());
 					return true;
 				}
 			}
@@ -158,49 +161,53 @@ public class ItemGen extends JavaPlugin {
 			
 			Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(),
 					player.getLocation().getBlockY() - 1, player.getLocation().getBlockZ());
-			if (block == null || block.getType() != Material.MOB_SPAWNER) {
+            if (block == null || block.getType() != SpawnerMat) {
 				sender.sendMessage((new StringBuilder()).append(ChatColor.GRAY)
 						.append("Standing Material:" + block.getType()).toString());
 				sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
 						.append("You need to be standing at a spawner to use this command!").toString());
 				return true;
 			}
-			if (version.equals("v1_8_R3")) {
-				NMS18_R3 Setspawner18R3 = new NMS18_R3();
-				check = Setspawner18R3.setspawner(block, player, delay, ranger, sranger);
-			} else if (version.equals("v1_7_R3")) {
-				NMS17_R3 Setspawner17R3 = new NMS17_R3();
-				check = Setspawner17R3.setspawner(block, player, delay, ranger, sranger);
-			} else if (version.equals("v1_7_R4")) {
-				NMS17_R4 Setspawner17R4 = new NMS17_R4();
-				check = Setspawner17R4.setspawner(block, player, delay, ranger, sranger);
-			} else if (version.equals("v1_9_R1")){
-				NMS19_R1 Setspawner19R1 = new NMS19_R1();
-				check = Setspawner19R1.setspawner(block, player, delay, ranger, sranger);
-			} else {
-				sender.sendMessage(
-						(new StringBuilder()).append(ChatColor.RED).append("Not support version!!!").toString());
-				return true;
-			}
+            check = Refle.setspawner(block, player, delay, range, spawnRange);
+            //}
+            //else if (version.equals("v1_8_R3")) {
+            //NMS18_R3 Setspawner18R3 = new NMS18_R3();
+            //check = Setspawner18R3.setspawner(block, player, delay, range, spawnRange);
+            //} else if (version.equals("v1_7_R3")) {
+            //NMS17_R3 Setspawner17R3 = new NMS17_R3();
+            //check = Setspawner17R3.setspawner(block, player, delay, range, spawnRange);
+            //} else if (version.equals("v1_7_R4")) {
+            //NMS17_R4 Setspawner17R4 = new NMS17_R4();
+            //check = Setspawner17R4.setspawner(block, player, delay, range, spawnRange);
+            //} else if (version.equals("v1_9_R1")){
+            //NMS19_R1 Setspawner19R1 = new NMS19_R1();
+            //check = Setspawner19R1.setspawner(block, player, delay, range, spawnRange);
+            //} else {
+            //sender.sendMessage(
+            //(new StringBuilder()).append(ChatColor.RED).append("Not support version!!!").toString());
+            //return true;
+            //}
 			if (check[1] == "false") {
 				if (check[0] == null) {
 					check[0] = "NO CHANGE";
 				} else {
+                    sender.sendMessage("");
+                    sender.sendMessage("");
 					sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_GREEN)
 							.append("============================================").toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.GREEN)
 							.append("Properties were successfully edited!").toString());
 					sender.sendMessage(
-							(new StringBuilder()).append(ChatColor.GREEN).append("ItemName:" + check[0]).toString());
+                            (new StringBuilder()).append(ChatColor.GREEN).append("ItemType: " + check[0]).toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.GREEN)
 							.append("Delay was:" + delay + "s, " + delay * 20 + "ticks").toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.GREEN)
-							.append("Ranger was:" + ranger + "Block(s)").toString());
+                            .append("Ranger was:" + range + "Block(s)").toString());
 					sender.sendMessage((new StringBuilder()).append(ChatColor.GREEN)
-							.append("SpawnRanger was:" + sranger + "Block(s)").toString());
+                            .append("SpawnRanger was:" + spawnRange + "Block(s)").toString());
 					if (delay == -1) {
 						sender.sendMessage((new StringBuilder()).append(ChatColor.GREEN)
-								.append("type /ig <delay> <ranger> <spawnranger> to configure!!!").toString());
+                                .append("Type /ig <Delay> <Player range> <SpawnRange> to configure!!!").toString());
 					}
 					sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_GREEN)
 							.append("============================================").toString());
@@ -225,17 +232,21 @@ public class ItemGen extends JavaPlugin {
 		}
 
 		getLogger().info("Your server is running version " + version);
+        //if (version.equals("v1_8_R3")) {
+        //return true;
+        //}else if(version.equals("v1_9_R1")){
+        //return true;
+        //} else if (version.equals("v1_7_R3")) {
+        //return true;
+        //} else if (version.equals("v1_7_R4")) {
+        //return true;
 		// server version that have NMS(Support)
-		if (version.equals("v1_8_R3")) {
-			return true;
-		}else if(version.equals("v1_9_R1")){
-			return true;
-		} else if (version.equals("v1_7_R3")) {
-			return true;
-		} else if (version.equals("v1_7_R4")) {
+        if (NMSRefle.Init()) {
+            Refle = new NMSRefle();
 			return true;
 		}
-
 		return false;
-	}
+
+    }
 }
+
