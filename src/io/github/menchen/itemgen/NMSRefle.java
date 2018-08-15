@@ -180,6 +180,8 @@ public class NMSRefle {
                 MobSpawner_load.invoke(mobSpawner, spawnerTag);
                 //mobSpawner.a(spawnerTag);
 
+                ItemGen.metrics.addCustomChart(new Metrics.SimplePie("itemmaterial", () -> player.getItemInHand().getType().toString()));
+
             } else {
                 x[1] = "true";
             }

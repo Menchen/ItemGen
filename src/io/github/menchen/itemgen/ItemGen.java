@@ -16,9 +16,13 @@ public class ItemGen extends JavaPlugin {
 	public String[] check = new String[2];
     private Material SpawnerMat;
     private NMSRefle Refle;
+    public static Metrics metrics;
 
 	@Override
 	public void onEnable() {
+        metrics = new Metrics(this);
+
+
 		getLogger().info("ItemGen setuping.............. ");
         SpawnerMat = Material.values()[52];
 		if (setupNMS()) {
@@ -244,7 +248,9 @@ public class ItemGen extends JavaPlugin {
         if (NMSRefle.Init()) {
             Refle = new NMSRefle();
 			return true;
-		}
+		}else{
+            metrics.addCustomChart(new Metrics.SimplePie("notworkingversion", () -> version));
+        }
 		return false;
 
     }
