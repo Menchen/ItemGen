@@ -1,5 +1,6 @@
 package io.github.menchen.itemgen;
 
+import org.apache.logging.log4j.util.StringBuilders;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,16 +18,56 @@ public class ItemGen extends JavaPlugin {
     private Material SpawnerMat;
     private NMSRefle Refle;
     public static Metrics metrics;
+	public ItemStack SpawnerItem;
+
+
+	public int VersionCompare(String a, String b) {
+		int a_lastIndex = 0;
+		int b_lastIndex = 0;
+		//if a is greater than b, the result will be positive
+		//if a is equal than b, the result will be 0
+		while (true) {
+			int a_index = a.indexOf(".", a_lastIndex);
+			int b_index = b.indexOf(".", b_lastIndex);
+			if (a_index == -1 || b_index == -1) {
+				if (b_index == a_index) {
+					return 0;
+				} else {
+					if (b_index == -1) {
+						return 1;
+					} else {
+						return -1;
+					}
+				}
+			}
+			if (Integer.parseInt(a.substring(a_lastIndex, a_index)) < Integer.parseInt(b.substring(b_lastIndex, b_index))) {
+				return -1;
+			}
+			if (Integer.parseInt(a.substring(a_lastIndex, a_index)) > Integer.parseInt(b.substring(b_lastIndex, b_index))) {
+				return 1;
+			}
+			a_lastIndex = a_index + 1;
+			b_lastIndex = b_index + 1;
+		}
+	}
 
 	@Override
 	public void onEnable() {
         metrics = new Metrics(this);
 
 
-		getLogger().info("ItemGen setuping.............. ");
-        SpawnerMat = Material.values()[52];
+		int versionStatus = VersionCompare("1.13", Bukkit.getBukkitVersion().substring(0, Bukkit.getBukkitVersion().indexOf("-")));
+
+		getLogger().info("Loading... ");
+		if (versionStatus >= 0) {
+			SpawnerItem = new ItemStack(Material.SPAWNER);
+			SpawnerMat = Material.SPAWNER;
+		} else {
+			SpawnerItem = new ItemStack(Material.values()[52]);
+			SpawnerMat = Material.values()[52];
+		}
 		if (setupNMS()) {
-			getLogger().info("Server version:" + version);
+			getLogger().info("Server version:" + version + " | " + versionStatus);
 			getLogger().info("The plugin setup process is complete!");
 
 		} else {
@@ -115,10 +156,9 @@ public class ItemGen extends JavaPlugin {
 					return true;
 				}
 				if (args[0].equalsIgnoreCase("give")) {
-                    ItemStack item = new ItemStack(SpawnerMat);
 					sender.sendMessage((new StringBuilder()).append(ChatColor.GREEN)
 							.append("Given to " + sender.getName() + " a Mob Spawner.").toString());
-					player.getInventory().addItem(item);
+					player.getInventory().addItem(SpawnerItem);
 					return true;
 				}
 			}
@@ -165,14 +205,16 @@ public class ItemGen extends JavaPlugin {
 			
 			Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(),
 					player.getLocation().getBlockY() - 1, player.getLocation().getBlockZ());
-            if (block == null || block.getType() != SpawnerMat) {
-				sender.sendMessage((new StringBuilder()).append(ChatColor.GRAY)
+			if (block != null) {
+				if (!(block.getType() == SpawnerMat)) {
+					sender.sendMessage((new StringBuilder()).append(ChatColor.GRAY)
 						.append("Standing Material:" + block.getType()).toString());
-				sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
+					sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
 						.append("You need to be standing at a spawner to use this command!").toString());
-				return true;
+					return true;
+				}
 			}
-            check = Refle.setspawner(block, player, delay, range, spawnRange);
+			check = Refle.setspawner(block, player, delay, range, spawnRange, player.getItemInHand());
             //}
             //else if (version.equals("v1_8_R3")) {
             //NMS18_R3 Setspawner18R3 = new NMS18_R3();
@@ -219,6 +261,7 @@ public class ItemGen extends JavaPlugin {
 			} else {
 				sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
 						.append("Something went wrong!,check the log to debug.").toString());
+
 			}
 			return true;
 		} else {

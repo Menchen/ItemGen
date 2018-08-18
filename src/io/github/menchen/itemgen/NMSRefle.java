@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 //import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
 //import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -41,6 +42,7 @@ public class NMSRefle {
     private static boolean haveInited = false;
     public static boolean useMobspawner_load = false;
     public static boolean useMobspawner_save = false;
+    public static boolean useLegacyEntityId = false;
 
     public static boolean Init() {
         if (haveInited) {
@@ -59,7 +61,6 @@ public class NMSRefle {
             CW_getHandle = CraftWorld.getDeclaredMethod("getHandle");
             CW_getTileEntity = NMSWorld.getDeclaredMethod("getTileEntity", getNMSClass("BlockPosition"));
             CI_asNMSCopy = getCraftBukkitClass("inventory.CraftItemStack").getDeclaredMethod("asNMSCopy", org.bukkit.inventory.ItemStack.class);
-            MobSpawner_load = TileEntityMobSpawner.getDeclaredMethod("load", NBTTagCompound);
             NBTTag_setString = NBTTagCompound.getDeclaredMethod("setString", String.class, String.class);
             NBTTag_setShort = NBTTagCompound.getDeclaredMethod("setShort", String.class, short.class);
             NBTTag_setByte = NBTTagCompound.getDeclaredMethod("setByte", String.class, byte.class);
@@ -112,7 +113,7 @@ public class NMSRefle {
 
     // Full reflection
     @SuppressWarnings("deprecation")
-    public String[] setspawner(Block block, Player player, int delay, int ranger, int sranger) {
+    public String[] setspawner(Block block, Player player, int delay, int ranger, int sranger, ItemStack handItem) {
         String[] x = new String[2];
         if (!haveInited) {
             Init();
@@ -122,8 +123,8 @@ public class NMSRefle {
             Object cfWorld = CW_getHandle.invoke(CraftWorld.cast(block.getWorld()));
             Object tileEntity = CW_getTileEntity.invoke(cfWorld, BPCons.newInstance(block.getX(), block.getY(), block.getZ()));
             //TileEntity tileEntity = craftWorld.getTileEntity(new BlockPosition(block.getX(), block.getY(), block.getZ()));
-            Object itemStack = CI_asNMSCopy.invoke(null, player.getItemInHand());
-            x[0] = (String) NMS_ItemStack_getName.invoke(itemStack);
+            Object itemStack = CI_asNMSCopy.invoke(null, handItem);
+            x[0] = handItem.getType().toString();
             //net.minecraft.server.v1_9_R1.ItemStack itemStack = CraftItemStack.asNMSCopy(player.getItemInHand());
             if (TileEntityMobSpawner.isInstance(tileEntity)) {
                 Object mobSpawner = TileEntityMobSpawner.cast(tileEntity);
@@ -144,7 +145,7 @@ public class NMSRefle {
                     //itemTag.setShort("Age", (short) 0);
                     NBTTag_setShort.invoke(itemTag, "Health", (short) 5);
                     // 1.9+ Fix, a change of minecraft NBT Data.
-                    NBTTag_setString.invoke(itemTag, "id", "Item");
+                    NBTTag_setString.invoke(itemTag, "id", "minecraft:item");
                     //itemTag.setShort("Health", (short) 5);
                     Object itemStackTag = NBTTagCompCons.newInstance();
                     //NBTTagCompound itemStackTag = new NBTTagCompound();
@@ -156,7 +157,7 @@ public class NMSRefle {
                     //itemTag.set("Item", itemStackTag);
                     NBTTag_set.invoke(spawnerTag, "SpawnData", itemTag);
                     //spawnerTag.set("SpawnData", itemTag);
-                    NBTTag_setShort.invoke(spawnerTag, "SpawnCount", (short) (player.getItemInHand().getAmount()));
+                    NBTTag_setShort.invoke(spawnerTag, "SpawnCount", (short) (handItem.getAmount()));
                     //spawnerTag.setShort("SpawnCount", (short) itemStack.count);
                     //getLogger().warning("Debug itemStack count");
                     //getLogger().warning(NMS_ItemStack_countField.get(itemStack).toString());
@@ -170,7 +171,7 @@ public class NMSRefle {
                     //spawnerTag.setShort("MinSpawnDelay", (short) (delay * 20));
                     NBTTag_setShort.invoke(spawnerTag, "MaxSpawnDelay", (short) (delay * 20));
                     //spawnerTag.setShort("MaxSpawnDelay", (short) (delay * 20));
-                    NBTTag_setShort.invoke(spawnerTag, "MaxNearbyEntities", (short) (player.getItemInHand().getAmount()));
+                    NBTTag_setShort.invoke(spawnerTag, "MaxNearbyEntities", (short) (handItem.getAmount()));
                     //spawnerTag.setShort("MaxNearbyEntities", (short) player.getItemInHand().getAmount());
                     NBTTag_setShort.invoke(spawnerTag, "RequiredPlayerRange", (short) (ranger));
                     //spawnerTag.setShort("RequiredPlayerRange", (short) (ranger));
@@ -180,15 +181,15 @@ public class NMSRefle {
                 MobSpawner_load.invoke(mobSpawner, spawnerTag);
                 //mobSpawner.a(spawnerTag);
 
-                ItemGen.metrics.addCustomChart(new Metrics.SimplePie("itemmaterial", () -> player.getItemInHand().getType().toString()));
+                ItemGen.metrics.addCustomChart(new Metrics.SimplePie("itemmaterial", () -> x[0]));
 
             } else {
                 x[1] = "true";
             }
         } catch (Exception e) {
-            getLogger().severe("Something wrong have happend! with ItemGen");
+            getLogger().severe("Something wrong have happened with ItemGen! (NMSReflection)");
             getLogger().severe(e.toString());
-            getLogger().severe(e.getStackTrace().toString());
+            e.printStackTrace();
         }
         x[1] = "false";
         return x;
