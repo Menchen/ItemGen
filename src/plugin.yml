@@ -1,7 +1,7 @@
 name: ItemGen
 main: io.github.menchen.itemgen.ItemGen
 description: Let you generate item with mob spawner!!!
-version: 2.0.7
+version: 2.1.1
 author: MCLand
 api-version: 1.13
 commands:
@@ -9,6 +9,11 @@ commands:
   aliases: [ig]
   description: Let you generate item with spawner.
   usage: Type [/ig help] to see help.
+  permission: itemgen.use
+ expgen:
+  aliases: [eg]
+  description: Let you generate exp with spawner.
+  usage: /eg <Delay> <Player Range> <Spawn Range> <EXP Value> <Max EXP Count>
   permission: itemgen.use
 permissions:
  itemgen.use:

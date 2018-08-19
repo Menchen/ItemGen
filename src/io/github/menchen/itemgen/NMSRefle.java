@@ -111,6 +111,59 @@ public class NMSRefle {
         return Class.forName("org.bukkit.craftbukkit." + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + "." + name);
     }
 
+    @SuppressWarnings("Duplicates")
+    public boolean setExpSpawner(Block block, int delay, int range, int srange, int value, int maxcount) {
+        try {
+            Object cfWorld = CW_getHandle.invoke(CraftWorld.cast(block.getWorld()));
+            Object tileEntity = CW_getTileEntity.invoke(cfWorld, BPCons.newInstance(block.getX(), block.getY(), block.getZ()));
+
+            if (TileEntityMobSpawner.isInstance(tileEntity)) {
+                Object mobSpawner = TileEntityMobSpawner.cast(tileEntity);
+                //TileEntityMobSpawner mobSpawner = (TileEntityMobSpawner) tileEntity;
+                Object spawnerTag = NBTTagCompCons.newInstance();
+                //NBTTagCompound spawnerTag = new NBTTagCompound();
+                MobSpawner_save.invoke(mobSpawner, spawnerTag);
+                NBTTag_remove.invoke(spawnerTag, "SpawnPotentials");
+                //MobSpawner_save.invoke(mobSpawner, spawnerTag);
+                //mobSpawner.save(spawnerTag);
+                NBTTag_setString.invoke(spawnerTag, "EntityId", "XPOrb");
+                //spawnerTag.setString("EntityId", "Item");
+                Object spawnData = NBTTagCompCons.newInstance();
+                //NBTTagCompound itemTag = new NBTTagCompound();
+                NBTTag_setShort.invoke(spawnData, "Age", (short) 0);
+                //itemTag.setShort("Age", (short) 0);
+                NBTTag_setShort.invoke(spawnData, "Health", (short) 5);
+                // 1.9+ Fix, a change of minecraft NBT Data.
+                NBTTag_setString.invoke(spawnData, "id", "minecraft:xp_orb");
+                NBTTag_setShort.invoke(spawnData, "Value", (short) value);
+                NBTTag_set.invoke(spawnerTag, "SpawnData", spawnData);
+                //spawnerTag.set("SpawnData", itemTag);
+                NBTTag_setShort.invoke(spawnerTag, "SpawnCount", (short) 1);
+                NBTTag_setShort.invoke(spawnerTag, "MinSpawnDelay", (short) (delay * 20));
+                //spawnerTag.setShort("MinSpawnDelay", (short) (delay * 20));
+                NBTTag_setShort.invoke(spawnerTag, "MaxSpawnDelay", (short) (delay * 20));
+                //spawnerTag.setShort("MaxSpawnDelay", (short) (delay * 20));
+                NBTTag_setShort.invoke(spawnerTag, "MaxNearbyEntities", (short) maxcount);
+                //spawnerTag.setShort("MaxNearbyEntities", (short) player.getItemInHand().getAmount());
+                NBTTag_setShort.invoke(spawnerTag, "RequiredPlayerRange", (short) (range));
+                //spawnerTag.setShort("RequiredPlayerRange", (short) (ranger));
+                NBTTag_setShort.invoke(spawnerTag, "SpawnRange", (short) (srange));
+                //spawnerTag.setShort("SpawnRange", (short) (sranger));
+
+                MobSpawner_load.invoke(mobSpawner, spawnerTag);
+                //mobSpawner.a(spawnerTag);
+
+                ItemGen.metrics.addCustomChart(new Metrics.SimplePie("itemmaterial", () -> "EXPOrb"));
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     // Full reflection
     @SuppressWarnings("deprecation")
     public String[] setspawner(Block block, Player player, int delay, int ranger, int sranger, ItemStack handItem) {
