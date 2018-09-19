@@ -15,8 +15,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ItemGen extends JavaPlugin {
     public String version;
     public String[] check = new String[2];
-    private Material SpawnerMat;
-    private NMSRefle Refle;
+    public static Material SpawnerMat;
+    private static NMSRefle Refle;
     public static Metrics metrics;
     public ItemStack SpawnerItem;
 
@@ -114,7 +114,7 @@ public class ItemGen extends JavaPlugin {
                             return true;
                         }
                     }
-                    if (new NMSRefle().setExpSpawner(block, Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]))) {
+                    if (Refle.setExpSpawner(block, Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]))) {
                         return true;
                     }
                     sender.sendMessage("Something wrong have happend. Note: this is experimental command");
@@ -149,6 +149,27 @@ public class ItemGen extends JavaPlugin {
             int spawnRange = 1;
             Player player = (Player) sender;
             if (args.length == 1) {
+                if (args[0].equalsIgnoreCase("get")){
+                    Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(),
+                            player.getLocation().getBlockY() - 1, player.getLocation().getBlockZ());
+                    if (block != null) {
+                        if (!(block.getType() == SpawnerMat)) {
+                            sender.sendMessage((new StringBuilder()).append(ChatColor.GRAY)
+                                    .append("Standing Material:" + block.getType()).toString());
+                            sender.sendMessage((new StringBuilder()).append(ChatColor.RED)
+                                    .append("You need to be standing at a spawner to use this command!").toString());
+                            return true;
+                        }
+                    }
+                    if (Refle.getSpawner(block,player)){
+                        sender.sendMessage((new StringBuilder()).append(ChatColor.GREEN).append("Given NBT Spawner to ").append(player.getName()).toString());
+                        return true;
+                    }else{
+                        return false;
+                    }
+
+                }
+
                 if (args[0].equalsIgnoreCase("help")) {
 
                     sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_GREEN)
@@ -164,6 +185,8 @@ public class ItemGen extends JavaPlugin {
                             .append("Usage: /ig help          Display this message").toString());
                     sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE)
                             .append("Usage: /ig info          Display info message about this plugin").toString());
+                    sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE)
+                            .append("Usage: /ig get          Give you the spawner that your standing with NBT Tag.").toString());
                     sender.sendMessage((new StringBuilder()).append(ChatColor.DARK_PURPLE)
                             .append("**********************************************").toString());
                     sender.sendMessage((new StringBuilder()).append(ChatColor.BLUE)

@@ -6,15 +6,20 @@ package io.github.menchen.itemgen;
 //import net.minecraft.server.v1_9_R1.TileEntityMobSpawner;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 //import org.bukkit.craftbukkit.v1_9_R1.CraftWorld;
 //import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import static org.bukkit.Bukkit.getLogger;
 
@@ -30,6 +35,7 @@ public class NMSRefle {
     public static Method CW_getHandle;
     public static Method CW_getTileEntity;
     public static Method CI_asNMSCopy;
+    public static Method CI_asBukkitCopy;
     public static Method MobSpawner_load;
     public static Method NBTTag_setString;
     public static Method NBTTag_setShort;
@@ -37,6 +43,7 @@ public class NMSRefle {
     public static Method NBTTag_set;
     public static Method NBTTag_remove;
     public static Method NMS_ItemStack_save;
+    public static Method NMS_ItemStack_setTag;
     public static Method NMS_ItemStack_getName;
     public static Method MobSpawner_save;
     private static boolean haveInited = false;
@@ -61,12 +68,14 @@ public class NMSRefle {
             CW_getHandle = CraftWorld.getDeclaredMethod("getHandle");
             CW_getTileEntity = NMSWorld.getDeclaredMethod("getTileEntity", getNMSClass("BlockPosition"));
             CI_asNMSCopy = getCraftBukkitClass("inventory.CraftItemStack").getDeclaredMethod("asNMSCopy", org.bukkit.inventory.ItemStack.class);
+            CI_asBukkitCopy = getCraftBukkitClass("inventory.CraftItemStack").getDeclaredMethod("asBukkitCopy", NMS_ItemStack);
             NBTTag_setString = NBTTagCompound.getDeclaredMethod("setString", String.class, String.class);
             NBTTag_setShort = NBTTagCompound.getDeclaredMethod("setShort", String.class, short.class);
             NBTTag_setByte = NBTTagCompound.getDeclaredMethod("setByte", String.class, byte.class);
             NBTTag_set = NBTTagCompound.getDeclaredMethod("set", String.class, getNMSClass("NBTBase"));
             NBTTag_remove = NBTTagCompound.getDeclaredMethod("remove", String.class);
             NMS_ItemStack_save = NMS_ItemStack.getDeclaredMethod("save", NBTTagCompound);
+            NMS_ItemStack_setTag = NMS_ItemStack.getDeclaredMethod("setTag", NBTTagCompound);
             NMS_ItemStack_getName = NMS_ItemStack.getDeclaredMethod("getName");
             haveInited = true;
         } catch (Exception e) {
@@ -163,6 +172,41 @@ public class NMSRefle {
         }
         return true;
     }
+
+    public boolean getSpawner(Block block,Player player){
+        try {
+
+
+        Object cfWorld = CW_getHandle.invoke(CraftWorld.cast(block.getWorld()));
+        Object tileEntity = CW_getTileEntity.invoke(cfWorld, BPCons.newInstance(block.getX(), block.getY(), block.getZ()));
+        if (TileEntityMobSpawner.isInstance(tileEntity)) {
+            Object mobSpawner = TileEntityMobSpawner.cast(tileEntity);
+            Object spawnerTag = NBTTagCompCons.newInstance();
+            MobSpawner_save.invoke(mobSpawner, spawnerTag);
+            Object itemTag = NBTTagCompCons.newInstance();
+            NBTTag_set.invoke(itemTag,"BlockEntityTag",spawnerTag);
+            Object item = CI_asNMSCopy.invoke(null,new ItemStack(ItemGen.SpawnerMat));
+            NMS_ItemStack_setTag.invoke(item,itemTag);
+            ItemStack spawneritem = (ItemStack) CI_asBukkitCopy.invoke(null,item);
+            ItemMeta im =spawneritem.getItemMeta();
+            ArrayList<String> lore = new ArrayList<String>();
+            lore.add((new StringBuilder().append(ChatColor.DARK_PURPLE).append(ChatColor.ITALIC).append("(+NBT)")).toString());
+            im.setLore(lore);
+            im.addEnchant(Enchantment.LURE,1,false);
+            im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            spawneritem.setItemMeta(im);
+            player.getInventory().addItem(spawneritem);
+
+
+
+        }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
 
     // Full reflection
     @SuppressWarnings("deprecation")
