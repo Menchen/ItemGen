@@ -1,6 +1,7 @@
 package io.github.menchen.itemgen;
 
-import org.apache.logging.log4j.util.StringBuilders;
+import me.dpohvar.powernbt.PowerNBT;
+import me.dpohvar.powernbt.api.NBTManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,8 +19,9 @@ public class ItemGen extends JavaPlugin {
     public static Material SpawnerMat;
     private static NMSRefle Refle;
     public static Metrics metrics;
+    public static boolean havePowerNBT = false;
+    public static NBTManager nbtManager;
     public ItemStack SpawnerItem;
-
 
     public int VersionCompare(String a, String b) {
         int a_lastIndex = 0;
@@ -55,6 +57,10 @@ public class ItemGen extends JavaPlugin {
     public void onEnable() {
         metrics = new Metrics(this);
 
+        if (getServer().getPluginManager().getPlugin("MVdWUpdater") == null){
+            havePowerNBT = true;
+            nbtManager = PowerNBT.getApi();
+        }
 
         int versionStatus = VersionCompare("1.13", Bukkit.getBukkitVersion().substring(0, Bukkit.getBukkitVersion().indexOf("-")));
 

@@ -4,18 +4,30 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.name</groupId>
-    <artifactId>pluginname</artifactId>
-    <version>1.0.0</version>
+    <groupId>io.github.menchen.itemgen</groupId>
+    <artifactId>ItemGen</artifactId>
+    <version>2.9</version>
 
+	<name>ItemGen</name>
+	<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
     <repositories>
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-            <id>bstats-repo</id>
-            <url>http://repo.bstats.org/content/repositories/releases/</url>
+            <id>varscript.ru-releases</id>
+            <name>varscript.ru-releases</name>
+            <url>http://repo.varscript.ru/release/</url>
+        </repository>
+        <repository>
+            <id>varscript.ru-snapshots</id>
+            <name>varscript.ru-snapshots</name>
+            <url>http://repo.varscript.ru/snapshots/</url>
         </repository>
     </repositories>
 
@@ -27,40 +39,12 @@
             <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
-        <!-- bStats -->
         <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>1.2</version>
-            <scope>compile</scope>
+            <groupId>me.dpohvar.powernbt</groupId>
+            <artifactId>PowerNBT</artifactId>
+            <version>LATEST</version>
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <minimizeJar>true</minimizeJar>
-                    <relocations>
-                        <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>me.name.util</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

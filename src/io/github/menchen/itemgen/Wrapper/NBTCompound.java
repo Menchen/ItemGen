@@ -1,8 +1,6 @@
 package io.github.menchen.itemgen.Wrapper;
 
 import io.github.menchen.itemgen.Wrapper.ReflectionManager.ClassType;
-import net.minecraft.server.v1_12_R1.NBTTagCompound;
-import org.bukkit.craftbukkit.libs.joptsimple.internal.Reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -31,10 +29,12 @@ public class NBTCompound {
     private static Method NBTTag_getFloat;
     private static Method NBTTag_get;
     private static Method NBTTag_getLong;
+    private static Method NBTTag_clone;
 
     private static Method NBTTag_remove;
 
     private static void init(){
+
         cls = ReflectionManager.getOrCreateClass("NBTTagCompound",ClassType.NMS);
         NBTTagCons = ReflectionManager.getOrCreateConstructor(cls);
         NBTTag_setString = ReflectionManager.getOrCreateMethod(cls,"setString",String.class,String.class);
@@ -53,10 +53,19 @@ public class NBTCompound {
         NBTTag_get = ReflectionManager.getOrCreateMethod(cls,"get",String.class);
 
         NBTTag_remove = ReflectionManager.getOrCreateMethod(cls,"remove",String.class);
+        NBTTag_clone = ReflectionManager.getOrCreateMethod(cls,"g");
         inited = true;
 
     }
-    public Class<?> getBaseClass(){
+    public NBTCompound cloneNBT(){
+        try {
+            return new NBTCompound(NBTTag_clone.invoke(base));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public static Class<?> getBaseClass(){
         return cls;
     }
     public Object getBase(){
@@ -77,87 +86,38 @@ public class NBTCompound {
     public boolean getBoolean(String name) throws InvocationTargetException, IllegalAccessException {
             return (boolean) NBTTag_getBoolean.invoke(base,name);
     }
-    public NBTCompound get(String name) throws InvocationTargetException, IllegalAccessException {
+    public NBTCompound get(String name) throws InvocationTargetException, IllegalAccessException, InstantiationException {
         return new NBTCompound(NBTTag_get.invoke(base,name));
     }
+    public void remove(String name) throws InvocationTargetException, IllegalAccessException {
+        NBTTag_remove.invoke(base,name);
+    }
 
 
-    public NBTCompound(Object nbt){
+    public NBTCompound(Object nbt) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         if (!inited) init();
-        try {
-            this.base = NBTTagCons.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        this.base = NBTTagCons.newInstance();
     }
-    public NBTCompound(){
+    public NBTCompound() throws IllegalAccessException, InvocationTargetException, InstantiationException {
         if (!inited) init();
-        try {
-            this.base = NBTTagCons.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        this.base = NBTTagCons.newInstance();
     }
-    public void put(String name,boolean b){
-        try {
-            NBTTag_setBoolean.invoke(base,name,b);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    public void put(String name,boolean b) throws InvocationTargetException, IllegalAccessException {
+        NBTTag_setBoolean.invoke(base,name,b);
     }
-    public void put(String name,String s){
-        try {
-            NBTTag_setString.invoke(base,name,s);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    public void put(String name,String s) throws InvocationTargetException, IllegalAccessException {
+        NBTTag_setString.invoke(base,name,s);
     }
-    public void put(String name,int i){
-        try {
-            NBTTag_setInt.invoke(base,name,i);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    public void put(String name,int i) throws InvocationTargetException, IllegalAccessException {
+        NBTTag_setInt.invoke(base,name,i);
     }
-    public void put(String name,byte b){
-        try {
-            NBTTag_setByte.invoke(base,name,b);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    public void put(String name,byte b) throws InvocationTargetException, IllegalAccessException {
+        NBTTag_setByte.invoke(base,name,b);
     }
-    public void put(String name,NBTCompound c){
-        try {
-            NBTTag_set.invoke(base,name,c);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    public void put(String name,NBTCompound c) throws InvocationTargetException, IllegalAccessException {
+        NBTTag_set.invoke(base,name,c);
     }
-    public void put(String name,short s){
-        try {
-            NBTTag_setShort.invoke(base,name,s);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    public void put(String name,short s) throws InvocationTargetException, IllegalAccessException {
+        NBTTag_setShort.invoke(base,name,s);
     }
 }

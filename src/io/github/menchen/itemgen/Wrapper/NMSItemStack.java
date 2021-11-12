@@ -30,57 +30,25 @@ public class NMSItemStack {
 
         inited = true;
     }
-    public String getName(){
-        try {
-            return (String) getName.invoke(base);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public String getName() throws InvocationTargetException, IllegalAccessException {
+        return (String) getName.invoke(base);
     }
-    public void setTag(NBTCompound nbtCompound){
-        try {
-            setTag.invoke(base,nbtCompound.getBase());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    public void setTag(NBTCompound c) throws InvocationTargetException, IllegalAccessException {
+        setTag.invoke(base,c.getBase());
     }
-    public void save(NBTCompound nbtCompound){
-        try {
-            save.invoke(base,nbtCompound.getBase());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    public void save(NBTCompound c) throws InvocationTargetException, IllegalAccessException {
+        save.invoke(base,c.getBase());
     }
     public Object asNMSCopy(){
         return base;
     }
-    public ItemStack asBukkitCopy(){
-        try {
-            return (ItemStack) asBukkitCopy.invoke(null,base);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public ItemStack asBukkitCopy() throws InvocationTargetException, IllegalAccessException {
+        return (ItemStack) asBukkitCopy.invoke(null,base);
     }
 
-    public NMSItemStack(ItemStack bukkitItem){
+    public NMSItemStack(ItemStack bukkitItem) throws InvocationTargetException, IllegalAccessException {
         if (!inited) init();
-        try {
-            base = asNMSCopy.invoke(null,bukkitItem);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        base = asNMSCopy.invoke(null,bukkitItem);
     }
 
     public Class<?> getBaseClass(){

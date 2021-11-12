@@ -7,8 +7,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class NMSBlock {
-    private Object base;
-    private Object cbWorld;
+    protected Object base;
+    protected Object cbWorld;
 
     private static boolean inited = false;
     private static Class<?> cbWorldcls;
@@ -22,7 +22,6 @@ public class NMSBlock {
     private static void init(){
         cbWorldcls = ReflectionManager.getOrCreateClass("CraftWorld",ReflectionManager.ClassType.BUKKIT);
         nmsWorldcls = ReflectionManager.getOrCreateClass("World",ReflectionManager.ClassType.NMS);
-        mobSpawnerTileEntitycls = ReflectionManager.getOrCreateClass("TileEntityMobSpawner",ReflectionManager.ClassType.NMS);
         blockPositioncls = ReflectionManager.getOrCreateClass("BlockPosition",ReflectionManager.ClassType.NMS);
         blockPositionCons = ReflectionManager.getOrCreateConstructor(blockPositioncls);
         cwHandle = ReflectionManager.getOrCreateMethod(cbWorldcls,"getHandle");
@@ -32,11 +31,19 @@ public class NMSBlock {
         }
 
         public NMSBlock(Object tileentity){
+        if (!inited) init();
         base = tileentity;
         cbWorld = null;
         }
 
+        public Object getCbWorld(){
+            return cbWorld;
+        }
+        public Object getBase(){
+            return base;
+        }
         public NMSBlock(Block block){
+            if (!inited) init();
             try {
                 cbWorld = cwHandle.invoke(cbWorldcls.cast(block.getWorld()));
                 base = getTileEntity.invoke(cbWorld, blockPositionCons.newInstance(block.getX(), block.getY(), block.getZ()));
